@@ -11,6 +11,9 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 # Global Cache Settings
 env:
   GODOT_BASE_BRANCH: "3.x"
@@ -23,16 +26,17 @@ jobs:
     name: Editor
 
     steps:
-      # 1. Скачиваем наш модуль вокселей в отдельную изолированную папку
+      # 1. Скачиваем модуль вокселей БЕЗ истории коммитов (спасает от ошибки packfile/403)
       - uses: actions/checkout@v4
         with:
           path: voxel-module
+          fetch-depth: 1 # <--- ВОТ ОНА, НАША ВЫРУЧАЛОЧКА!
 
-      # 2. Скачиваем Godot Engine в свою отдельную папку godot
+      # 2. Скачиваем Godot Engine (тут глубина уже стояла)
       - name: Clone Godot Engine
         run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
 
-      # 3. Переносим модуль внутрь папки Godot (используем bash для надежности путей)
+      # 3. Переносим модуль внутрь папки Godot
       - name: Move module to Godot folders
         shell: bash
         run: mv voxel-module godot/modules/voxel
@@ -64,7 +68,7 @@ jobs:
           python --version
           scons --version
 
-      # Компиляция редактора (ВАЖНО: запускаем внутри папки godot)
+      # Компиляция редактора
       - name: Compilation
         working-directory: godot
         env:
@@ -83,12 +87,13 @@ jobs:
     name: Release
 
     steps:
-      # 1. Скачиваем наш модуль вокселей в отдельную изолированную папку
+      # 1. Скачиваем модуль вокселей БЕЗ истории коммитов
       - uses: actions/checkout@v4
         with:
           path: voxel-module
+          fetch-depth: 1 # <--- И сюда тоже бабахнем!
 
-      # 2. Скачиваем Godot Engine в свою отдельную папку godot
+      # 2. Скачиваем Godot Engine
       - name: Clone Godot Engine
         run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
 
@@ -124,7 +129,7 @@ jobs:
           python --version
           scons --version
 
-      # Компиляция экспортного шаблона (ВАЖНО: запускаем внутри папки godot)
+      # Компиляция экспортного шаблона
       - name: Compilation
         working-directory: godot
         env:
