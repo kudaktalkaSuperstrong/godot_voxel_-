@@ -23,14 +23,19 @@ jobs:
     name: Editor
 
     steps:
-      # Скачиваем Godot напрямую через чистый Git во избежание ошибки 403
-      - name: Clone Godot Engine
-        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git .
-
-      # А вот наш модуль качаем как обычно через checkout (тут наш токен сработает на ура)
+      # 1. Скачиваем наш модуль вокселей в отдельную изолированную папку
       - uses: actions/checkout@v4
         with:
-          path: modules/voxel
+          path: voxel-module
+
+      # 2. Скачиваем Godot Engine в свою отдельную папку godot
+      - name: Clone Godot Engine
+        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
+
+      # 3. Переносим модуль внутрь папки Godot (используем bash для надежности путей)
+      - name: Move module to Godot folders
+        shell: bash
+        run: mv voxel-module godot/modules/voxel
 
       # Загрузка кэша SCons
       - name: Load .scons_cache directory
@@ -59,8 +64,9 @@ jobs:
           python --version
           scons --version
 
-      # Компиляция редактора
+      # Компиляция редактора (ВАЖНО: запускаем внутри папки godot)
       - name: Compilation
+        working-directory: godot
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
@@ -70,21 +76,26 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: godot.windows.opt.tools.64.exe
-          path: bin/godot.windows.opt.tools.64.exe
+          path: godot/bin/godot.windows.opt.tools.64.exe
 
   windows-template:
     runs-on: "windows-latest"
     name: Release
 
     steps:
-      # Скачиваем Godot напрямую через чистый Git во избежание ошибки 403
-      - name: Clone Godot Engine
-        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git .
-
-      # Скачиваем наш модуль вокселей
+      # 1. Скачиваем наш модуль вокселей в отдельную изолированную папку
       - uses: actions/checkout@v4
         with:
-          path: modules/voxel
+          path: voxel-module
+
+      # 2. Скачиваем Godot Engine в свою отдельную папку godot
+      - name: Clone Godot Engine
+        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
+
+      # 3. Переносим модуль внутрь папки Godot
+      - name: Move module to Godot folders
+        shell: bash
+        run: mv voxel-module godot/modules/voxel
 
       # Загрузка кэша SCons
       - name: Load .scons_cache directory
@@ -113,8 +124,9 @@ jobs:
           python --version
           scons --version
 
-      # Компиляция экспортного шаблона
+      # Компиляция экспортного шаблона (ВАЖНО: запускаем внутри папки godot)
       - name: Compilation
+        working-directory: godot
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
@@ -124,4 +136,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: godot.windows.opt.64.exe
-          path: bin/godot.windows.opt.64.exe
+          path: godot/bin/godot.windows.opt.64.exe
