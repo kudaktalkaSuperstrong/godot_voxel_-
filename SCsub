@@ -1,4 +1,3 @@
-
 # This is the entry point for SCons to build this engine as a module.
 # It has to be integrated to Godot's codebase, so it cannot be run on its own, see `README` for more information.
 # To build as an extension, see `SConstruct`.
@@ -18,6 +17,11 @@ if not env["arch"].startswith("x86"):
 
 env_voxel = env_modules.Clone()
 
+# Умная проверка флага редактора для совместимости с Godot 3.5 и 3.x 🌟
+is_editor_build = env["tools"] if "tools" in env else False
+if hasattr(env, "editor_build"):
+	is_editor_build = env.editor_build
+
 if env_voxel["voxel_werror"]:
 	# Enable warnings as errors only for module code.
 	# This is initially to workaround MSVC updates causing unexpected warnings in older versions of Godot, which rarely
@@ -28,7 +32,8 @@ if env_voxel["voxel_werror"]:
 	else:
 		env_voxel.AppendUnique(CCFLAGS=["-Werror"])
 
-voxel_files = common.get_sources(env_voxel, env.editor_build)
+# Используем нашу совместимую переменную вместо env.editor_build 🎯
+voxel_files = common.get_sources(env_voxel, is_editor_build)
 
 env_voxel.Append(CPPDEFINES=[
 	# Tell engine-agnostic code we are using Godot Engine as a module
@@ -42,7 +47,7 @@ if env["voxel_sqlite"]:
 	env_sqlite.disable_warnings()
 
 	# if not env_sqlite.msvc:
-	#     env_sqlite.Append(CXXFLAGS=["-Wno-discarded-qualifiers"])
+	#      env_sqlite.Append(CXXFLAGS=["-Wno-discarded-qualifiers"])
 
 	# TODO Enhancement: the way SQLite is integrated should not be duplicated between Godot and GodotCpp targets.
 	# Had to do so, because this line below is specific to Godot's build system!
@@ -67,7 +72,8 @@ if FAST_NOISE_2_SRC:
 		"util/noise/fast_noise_2.cpp"
 	]
 
-	if env.editor_build:
+	# Тут тоже используем нашу совместимую переменную! 🎯
+	if is_editor_build:
 		voxel_files += [
 			"editor/fast_noise_2/*.cpp"
 		]
