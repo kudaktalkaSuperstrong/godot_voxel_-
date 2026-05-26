@@ -1,9 +1,10 @@
 name: 🚪 Windows Builds
 on:
   push:
-    branches: [ godot3.x, github_actions ]
+    branches: [ master, github_actions, godot3.x ]
   pull_request:
-    branches: [ godot3.x ]
+    branches: [ master ]
+  workflow_dispatch:
 
 # Global Cache Settings
 # SCONS_CACHE for windows must be set in the build environment
