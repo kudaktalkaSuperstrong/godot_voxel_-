@@ -23,21 +23,21 @@ jobs:
     name: Editor
 
     steps:
-      # Clone Godot
-      - uses: actions/checkout@v2
+      # Clone Godot (Обновили до v4)
+      - uses: actions/checkout@v4
         with:
           repository: godotengine/godot
           ref: 3.x
 
-      # Clone our module under the correct directory
-      - uses: actions/checkout@v2
+      # Clone our module under the correct directory (Обновили до v4)
+      - uses: actions/checkout@v4
         with:
           path: modules/voxel
 
-      # Upload cache on completion and check it out now
+      # Upload cache on completion and check it out now (Обновили до v4)
       - name: Load .scons_cache directory
         id: windows-editor-cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /.scons_cache/
           key: ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}
@@ -46,9 +46,9 @@ jobs:
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}
 
-      # Use python 3.x release
+      # Use python 3.x release (Обновили до v5)
       - name: Set up Python 3.x
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
           architecture: 'x64'
@@ -68,8 +68,8 @@ jobs:
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=yes tests=no target=release_debug
 
-      # Make build available
-      - uses: actions/upload-artifact@v2
+      # Make build available (Обновили до v4)
+      - uses: actions/upload-artifact@v4
         with:
           name: godot.windows.opt.tools.64.exe
           path: bin/godot.windows.opt.tools.64.exe
@@ -79,21 +79,21 @@ jobs:
     name: Release
 
     steps:
-      # Clone Godot
-      - uses: actions/checkout@v2
+      # Clone Godot (Обновили до v4)
+      - uses: actions/checkout@v4
         with:
           repository: godotengine/godot
           ref: 3.x
 
-      # Clone our module under the correct directory
-      - uses: actions/checkout@v2
+      # Clone our module under the correct directory (Обновили до v4)
+      - uses: actions/checkout@v4
         with:
           path: modules/voxel
 
-      # Upload cache on completion and check it out now
+      # Upload cache on completion and check it out now (Поставили стабильный официальный cache@v4)
       - name: Load .scons_cache directory
         id: windows-template-cache
-        uses: RevoluPowered/cache@v2.1
+        uses: actions/cache@v4
         with:
           path: /.scons_cache/
           key: ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}-${{ github.sha }}
@@ -102,9 +102,9 @@ jobs:
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}
 
-      # Use python 3.x release
+      # Use python 3.x release (Обновили до v5)
       - name: Set up Python 3.x
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
           architecture: 'x64'
@@ -124,8 +124,8 @@ jobs:
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release
 
-      # Make build available
-      - uses: actions/upload-artifact@v2
+      # Make build available (Обновили до v4)
+      - uses: actions/upload-artifact@v4
         with:
           name: godot.windows.opt.64.exe
           path: bin/godot.windows.opt.64.exe
