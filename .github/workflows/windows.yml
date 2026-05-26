@@ -17,7 +17,7 @@ permissions:
 
 # Global Cache Settings
 env:
-  GODOT_BASE_BRANCH: "3.x"
+  GODOT_BASE_BRANCH: "3.5-stable" # Чистый кэш для стабильной сборки, без старых ошибок! 🌟
   SCONS_CACHE_MSVC_CONFIG: true
   SCONS_CACHE_LIMIT: 4096
 
@@ -32,9 +32,9 @@ jobs:
         with:
           path: voxel-module
 
-      # 2. Скачиваем Godot Engine в свою отдельную папку godot
+      # 2. Скачиваем Godot Engine (МЕНЯЕМ НА СТАБИЛЬНУЮ ВЕТКУ БЕЗ КОНФЛИКТОВ КОДА 🎯)
       - name: Clone Godot Engine
-        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
+        run: git clone --branch 3.5-stable --depth 1 https://github.com/godotengine/godot.git godot
 
       # 3. Переносим модуль внутрь папки Godot
       - name: Move module to Godot folders
@@ -92,9 +92,9 @@ jobs:
         with:
           path: voxel-module
 
-      # 2. Скачиваем Godot Engine в свою отдельную папку godot
+      # 2. Скачиваем Godot Engine (ТУТ ТОЖЕ НА КРАСИВУЮ СТАБИЛЬНУЮ ВЕТКУ 🎯)
       - name: Clone Godot Engine
-        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
+        run: git clone --branch 3.5-stable --depth 1 https://github.com/godotengine/godot.git godot
 
       # 3. Переносим модуль внутрь папки Godot
       - name: Move module to Godot folders
