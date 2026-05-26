@@ -23,18 +23,16 @@ jobs:
     name: Editor
 
     steps:
-      # Clone Godot (Обновили до v4)
-      - uses: actions/checkout@v4
-        with:
-          repository: godotengine/godot
-          ref: 3.x
+      # Скачиваем Godot напрямую через чистый Git во избежание ошибки 403
+      - name: Clone Godot Engine
+        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git .
 
-      # Clone our module under the correct directory (Обновили до v4)
+      # А вот наш модуль качаем как обычно через checkout (тут наш токен сработает на ура)
       - uses: actions/checkout@v4
         with:
           path: modules/voxel
 
-      # Upload cache on completion and check it out now (Обновили до v4)
+      # Загрузка кэша SCons
       - name: Load .scons_cache directory
         id: windows-editor-cache
         uses: actions/cache@v4
@@ -46,14 +44,14 @@ jobs:
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}
 
-      # Use python 3.x release (Обновили до v5)
+      # Установка Python
       - name: Set up Python 3.x
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
           architecture: 'x64'
 
-      # Setup scons
+      # Настройка зависимостей
       - name: Configuring Python packages
         run: |
           python -c "import sys; print(sys.version)"
@@ -61,14 +59,14 @@ jobs:
           python --version
           scons --version
 
-      # Compilation
+      # Компиляция редактора
       - name: Compilation
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=yes tests=no target=release_debug
 
-      # Make build available (Обновили до v4)
+      # Сохранение готового файла
       - uses: actions/upload-artifact@v4
         with:
           name: godot.windows.opt.tools.64.exe
@@ -79,18 +77,16 @@ jobs:
     name: Release
 
     steps:
-      # Clone Godot (Обновили до v4)
-      - uses: actions/checkout@v4
-        with:
-          repository: godotengine/godot
-          ref: 3.x
+      # Скачиваем Godot напрямую через чистый Git во избежание ошибки 403
+      - name: Clone Godot Engine
+        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git .
 
-      # Clone our module under the correct directory (Обновили до v4)
+      # Скачиваем наш модуль вокселей
       - uses: actions/checkout@v4
         with:
           path: modules/voxel
 
-      # Upload cache on completion and check it out now (Поставили стабильный официальный cache@v4)
+      # Загрузка кэша SCons
       - name: Load .scons_cache directory
         id: windows-template-cache
         uses: actions/cache@v4
@@ -102,14 +98,14 @@ jobs:
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}-${{ github.ref }}
             ${{ github.job }}-${{ env.GODOT_BASE_BRANCH }}
 
-      # Use python 3.x release (Обновили до v5)
+      # Установка Python
       - name: Set up Python 3.x
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
           architecture: 'x64'
 
-      # Setup scons
+      # Настройка зависимостей
       - name: Configuring Python packages
         run: |
           python -c "import sys; print(sys.version)"
@@ -117,14 +113,14 @@ jobs:
           python --version
           scons --version
 
-      # Compilation
+      # Компиляция экспортного шаблона
       - name: Compilation
         env:
           SCONS_CACHE: /.scons_cache/
         run: |
           scons -j2 verbose=yes warnings=all werror=yes platform=windows tools=no tests=no target=release
 
-      # Make build available (Обновили до v4)
+      # Сохранение готового шаблона
       - uses: actions/upload-artifact@v4
         with:
           name: godot.windows.opt.64.exe
