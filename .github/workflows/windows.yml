@@ -32,9 +32,9 @@ jobs:
           path: voxel-module
           fetch-depth: 1 # <--- ВОТ ОНА, НАША ВЫРУЧАЛОЧКА!
 
-      # 2. Скачиваем Godot Engine (тут глубина уже стояла)
+     # 2. Скачиваем Godot Engine (теперь точно стабильный!)
       - name: Clone Godot Engine
-        run: git clone --branch 3.x --depth 1 https://github.com/godotengine/godot.git godot
+        run: git clone --branch 3.5.3-stable --depth 1 https://github.com/godotengine/godot.git godot
 
       # 3. Переносим модуль внутрь папки Godot
       - name: Move module to Godot folders
